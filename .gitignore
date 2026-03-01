@@ -1,0 +1,7 @@
+venv/
+__pycache__/
+frames/
+answer.wav
+*.pyc
+.env
+history.json

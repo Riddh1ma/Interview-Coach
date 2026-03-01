@@ -1,0 +1,9 @@
+streamlit
+openai-whisper
+deepface
+opencv-python
+sounddevice
+scipy
+numpy
+tf-keras
+ollama
