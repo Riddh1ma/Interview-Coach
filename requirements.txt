@@ -2,7 +2,6 @@ streamlit
 openai-whisper
 deepface==0.0.98
 opencv-python-headless
-sounddevice
 scipy
 numpy
 tensorflow==2.20.0

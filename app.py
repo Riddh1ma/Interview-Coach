@@ -4,9 +4,8 @@ import json
 import os
 from datetime import datetime
 from questions import INTERVIEW_QUESTIONS
-from recorder import record_audio_and_frames
 from transcriber import transcribe
-from analyzer import analyze_emotions, analyze_speech
+from analyzer import analyze_speech
 from feedback import get_ai_feedback
 
 st.set_page_config(
@@ -113,39 +112,78 @@ with col_btn:
 st.divider()
 
 # ── Record button ─────────────────────────────────────
-if st.button("🔴  Start Recording — Speak Your Answer", type="primary", use_container_width=True):
-    bar = st.progress(0, text="🎙️ Recording... Speak now!")
-    audio_file, frames = record_audio_and_frames('answer.wav', duration)
-    bar.progress(25, text="📝 Transcribing your speech...")
-    transcript = transcribe(audio_file)
-    bar.progress(50, text="😊 Analyzing your emotions...")
-    emotion, confidence = analyze_emotions()
-    speech_data = analyze_speech(transcript, duration)
-    bar.progress(75, text="🤖 Generating AI feedback...")
-    feedback = get_ai_feedback(
-        st.session_state.question, transcript,
-        emotion, confidence, speech_data
-    )
-    bar.progress(100, text="✅ Done!")
+# ── Browser-based audio recording ─────────────────────
+st.subheader("🎙️ Record Your Answer")
 
-    # Save to history
-    save_history({
-        'date': datetime.now().strftime("%b %d, %H:%M"),
-        'category': category,
-        'question': st.session_state.question,
-        'confidence': confidence,
-        'clarity': speech_data['clarity_score'],
-        'wpm': speech_data['wpm'],
-        'emotion': emotion,
-    })
+audio_value = st.audio_input("Click the microphone and record your answer")
 
-    st.session_state.results = {
-        'transcript': transcript,
-        'emotion': emotion,
-        'confidence': confidence,
-        'speech': speech_data,
-        'feedback': feedback,
-    }
+if audio_value is not None:
+    st.audio(audio_value)
+
+    if st.button(
+        "🤖 Analyze My Answer",
+        type="primary",
+        use_container_width=True
+    ):
+        try:
+            bar = st.progress(0, text="💾 Processing your recording...")
+
+            # Save browser-recorded audio
+            audio_file = "answer.wav"
+
+            with open(audio_file, "wb") as f:
+                f.write(audio_value.getbuffer())
+
+            bar.progress(20, text="📝 Transcribing your speech...")
+
+            transcript = transcribe(audio_file)
+
+            bar.progress(45, text="🗣️ Analyzing your speech...")
+
+            # Since cloud recording does not currently capture
+            # continuous webcam frames, use neutral/default values.
+            emotion = "neutral"
+            confidence = 5
+
+            speech_data = analyze_speech(transcript, duration)
+
+            bar.progress(70, text="🤖 Generating AI feedback...")
+
+            feedback = get_ai_feedback(
+                st.session_state.question,
+                transcript,
+                emotion,
+                confidence,
+                speech_data
+            )
+
+            bar.progress(100, text="✅ Analysis complete!")
+
+            # Save attempt to history
+            save_history({
+                'date': datetime.now().strftime("%b %d, %H:%M"),
+                'category': category,
+                'question': st.session_state.question,
+                'confidence': confidence,
+                'clarity': speech_data['clarity_score'],
+                'wpm': speech_data['wpm'],
+                'emotion': emotion,
+            })
+
+            # Store results
+            st.session_state.results = {
+                'transcript': transcript,
+                'emotion': emotion,
+                'confidence': confidence,
+                'speech': speech_data,
+                'feedback': feedback,
+            }
+
+            st.rerun()
+
+        except Exception as e:
+            st.error(f"An error occurred while analyzing your answer: {e}")
+    
 
 # ── Results ───────────────────────────────────────────
 if 'results' in st.session_state:
