@@ -1,4 +1,8 @@
-from deepface import DeepFace
+try:
+    from deepface import DeepFace
+except (ImportError, OSError):
+    DeepFace = None
+    
 import os
 
 # ── EMOTION DETECTION ──────────────────────────────────
@@ -13,6 +17,8 @@ CONFIDENCE_MAP = {
 }
 
 def analyze_emotions(frames_dir='frames'):
+    if DeepFace is None:
+        return "neutral", 5
     frame_files = [f for f in os.listdir(frames_dir) if f.endswith('.jpg')]
     if not frame_files:
         return 'neutral', 5
