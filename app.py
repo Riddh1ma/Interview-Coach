@@ -14,27 +14,51 @@ st.set_page_config(
     layout='wide'
 )
 
-# ── Custom CSS for polished look ──────────────────────
+# ── Custom CSS for polished dark-mode look ────────────
 st.markdown("""
 <style>
-    .main { background-color: #f8f9fa; }
+
     .score-card {
-        background: white;
+        background: #1e1e2f;
         border-radius: 12px;
         padding: 20px;
         text-align: center;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.25);
     }
-    .score-good { border-top: 4px solid #28a745; }
-    .score-mid  { border-top: 4px solid #ffc107; }
-    .score-bad  { border-top: 4px solid #dc3545; }
+
+    .score-card h4 {
+        color: #b8b8c8;
+    }
+
+    .score-card h2 {
+        color: #ffffff;
+    }
+
+    .score-good {
+        border-top: 4px solid #28a745;
+    }
+
+    .score-mid {
+        border-top: 4px solid #ffc107;
+    }
+
+    .score-bad {
+        border-top: 4px solid #dc3545;
+    }
+
     .history-card {
-        background: white;
+        background: #1e1e2f;
+        color: #ffffff;
         border-radius: 10px;
         padding: 15px;
         margin-bottom: 10px;
-        box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+        box-shadow: 0 1px 4px rgba(0,0,0,0.25);
     }
+
+    .history-card small {
+        color: #b8b8c8;
+    }
+
 </style>
 """, unsafe_allow_html=True)
 
