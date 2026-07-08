@@ -1,9 +1,5 @@
 streamlit
 openai-whisper
-deepface==0.0.98
-opencv-python-headless
 scipy
 numpy
-tensorflow==2.20.0
-tf-keras
-ollama
+groq
